@@ -1,0 +1,26 @@
+{
+  "train": {
+    "epochs": 10,
+    "batch_size": 32,
+    "learning_rate": 5e-6,
+    "verbose": 0
+  },
+  "model": {
+    "type": "bert",
+    "use_pretrained": false,
+    "pretrained_folder": "model_files/test_model/1872"
+  },
+  "saving": {
+    "save_folder": "model_files/test_model",
+    "_comment1": "defaults to saving once per epoch if `null`",
+    "batches_per_save": null
+  },
+  "dataset": {
+    "name": "meld",
+    "num_classes": 7,
+    "max_sequence_length": 80
+  },
+  "visuals": {
+    "ncols": 120
+  }
+}

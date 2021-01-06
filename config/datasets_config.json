@@ -1,0 +1,16 @@
+{
+  "amazon": {
+    "train_dir": "datasets/amazon/train.ft.txt",
+    "validation_dir": "datasets/amazon/test.ft.txt",
+    "train_total_length": 3600000,
+    "validation_total_length": 400000
+  },
+  "meld": {
+      "train_dir": "datasets/MELD/train_sent_emo.csv",
+      "validation_dir": "datasets/MELD/validation_sent_emo.csv",
+      "test_dir": "datasets/MELD/test_sent_emo.csv",
+      "train_total_length": 9989,
+      "validation_total_length": 1109,
+      "test_total_length": 2610
+  }
+}
