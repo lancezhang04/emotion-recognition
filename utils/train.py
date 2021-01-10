@@ -8,48 +8,62 @@ import os
 import json
 
 
-def load_configuration(train_config, datasets_config):
+def load_configuration(config, datasets_config, train=True):
     """
     Utility function to use before training.
-    :param train_config: the training configuration file
+    :param config: the training configuration file
     :param datasets_config: the datasets configuration file
+    :param train: whether loading configuration for train or test
     :return: configuration as dictionary
     """
 
-    # using a dictionary to facilitate retrieving variable name
-    config = {}
+    # using a dictionary to facilitate retrieving variables
+    combined_config = {}
 
-    dataset_name = train_config["dataset"]["name"]
+    # add configuration for dataset
+    dataset_name = config["dataset"]["name"]
     try:
-        config["dataset"] = {}
-        config["dataset"].update(train_config["dataset"])
-        config["dataset"].update(datasets_config[dataset_name])
-        config["dataset"]["name"] = dataset_name
+        combined_config["dataset"] = {}
+        combined_config["dataset"].update(config["dataset"])
+        combined_config["dataset"].update(datasets_config[dataset_name])
+        combined_config["dataset"]["name"] = dataset_name
     except KeyError:
         raise ValueError("The dataset \"" + dataset_name + "\" is not available")
 
-    config.update(train_config["train"])
+    # add configuration for model
+    combined_config["model"] = {}
+    combined_config["model"].update(config["model"])
+    combined_config["model"]["num_labels"] = config["dataset"]["num_classes"]
 
-    config["visuals"] = {}
-    config["visuals"].update(train_config["visuals"])
+    # add configuration for visuals
+    combined_config["visuals"] = {}
+    combined_config["visuals"].update(config["visuals"])
 
-    config["model"] = {}
-    config["model"].update(train_config["model"])
-    config["model"]["num_labels"] = train_config["dataset"]["num_classes"]
+    # add configuration specific to training; print out configuration if necessary
+    if train:
+        combined_config.update(config["train"])
 
-    config["total_steps"] = config["epochs"] * config["dataset"]["train_total_length"]
-    config["batches_per_epoch"] = config["dataset"]["train_total_length"] // config["batch_size"]
-    config["batches_per_validation"] = config["dataset"]["validation_total_length"] // config["batch_size"]
+        combined_config["total_steps"] = combined_config["epochs"] * combined_config["dataset"]["train_total_length"]
 
-    config["batches_per_save"] = train_config["saving"]["batches_per_save"] \
-        if train_config["saving"]["batches_per_save"] else config["batches_per_epoch"]
-    config["save_folder"] = train_config["saving"]["save_folder"]
+        combined_config["batches_per_save"] = config["saving"]["batches_per_save"] \
+            if config["saving"]["batches_per_save"] else combined_config["batches_per_epoch"]
+        combined_config["save_folder"] = config["saving"]["save_folder"]
 
-    if config["verbose"] > 0:
-        for key, value in config.items():
-            print(key + ":", value)
+        if combined_config["verbose"] > 0:
+            for key, value in combined_config.items():
+                print(key + ":", value)
+    else:
+        combined_config["batch_size"] = config["batch_size"]
+    combined_config["batches_per_epoch"] = \
+        combined_config["dataset"]["train_total_length"] // combined_config["batch_size"]
+    # bad implementation (for benchmarking), fix later
+    combined_config["batches_per_train"] = combined_config["batches_per_epoch"]
+    combined_config["batches_per_validation"] = \
+        combined_config["dataset"]["validation_total_length"] // combined_config["batch_size"]
+    combined_config["batches_per_test"] = \
+        combined_config["dataset"]["test_total_length"] // combined_config["batch_size"]
 
-    return config
+    return combined_config
 
 
 def load_model(config, train=True):
@@ -58,7 +72,7 @@ def load_model(config, train=True):
 
     if config["model"]["type"] == "bert":
         # `use_pretrained` --> use model trained and saved locally on the machine
-        if config["model"]["use_pretrained"]:
+        if not train or config["model"]["use_pretrained"]:
             model = BertForSequenceClassification.from_pretrained(
                 config["model"]["pretrained_folder"]
             )
@@ -95,6 +109,9 @@ def load_model(config, train=True):
 
 
 def load_batch_bert(tokenizer, config, batch_idx, mode="train"):
+    if mode not in ["train", "validation", "test"]:
+        raise ValueError
+
     dataset_name = config["dataset"]["name"]
     if dataset_name == "amazon":
         sentences, y_train = load_amazon_lines(
@@ -107,7 +124,7 @@ def load_batch_bert(tokenizer, config, batch_idx, mode="train"):
             config["dataset"][mode + "_dir"],
             batch_idx * config["batch_size"],
             (batch_idx + 1) * config["batch_size"],
-            mode="categorical" if config["model"]["num_labels"] > 2 else "binary"
+            num_labels=config["model"]["num_labels"]
         )
     else:
         raise ValueError("The dataset \"" + dataset_name + "\" is not available")

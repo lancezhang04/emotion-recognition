@@ -1,0 +1,16 @@
+{
+  "batch_size": 32,
+  "model": {
+    "type": "bert",
+    "pretrained_folder": "model_files/test_model/1560"
+  },
+  "dataset": {
+    "name": "meld",
+    "num_classes": 7,
+    "max_sequence_length": 90,
+    "mode": "test"
+  },
+  "visuals": {
+    "ncols": 120
+  }
+}

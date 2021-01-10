@@ -92,7 +92,7 @@ def load_amazon_lines(file_dir, start_idx, end_idx):
 
 
 # functions for loading lines from the meld dataset
-def process_meld_lines(lines, mode, meld_config):
+def process_meld_lines(lines, num_labels, meld_config):
     X, y = [], []
 
     for line in lines:
@@ -101,10 +101,10 @@ def process_meld_lines(lines, mode, meld_config):
             line = list(pd.read_csv(StringIO(line)))
             text = line[1]
 
-            if mode == "categorical":
+            if num_labels > 2:
                 # maps emotion to class label (7 classes total)
                 label = meld_config["emotions_mapping"][line[3]]
-            elif mode == "binary":
+            elif num_labels == 2:
                 # maps sentiment to label (0, 0.5, or 1)
                 # "." to address the problem of pandas adding a ".1"
                 sentiment = line[4].split(".")[0]
@@ -140,9 +140,9 @@ def load_meld_lines_random(file_dir, batch_size, num_labels=7):
     return X, y
 
 
-def load_meld_lines(file_dir, start_idx, end_idx, mode="categorical"):
+def load_meld_lines(file_dir, start_idx, end_idx, num_labels):
     meld_config = json.load(open("datasets/MELD/meld_config.json", "r"))
     # skips the first line (header)
     lines = [linecache.getline(file_dir, i + 2) for i in range(start_idx, end_idx)]
-    X, y = process_meld_lines(lines, mode, meld_config)
+    X, y = process_meld_lines(lines, num_labels, meld_config)
     return X, y

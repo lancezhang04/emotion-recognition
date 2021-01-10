@@ -3,7 +3,11 @@
     "train_dir": "datasets/amazon/train.ft.txt",
     "validation_dir": "datasets/amazon/test.ft.txt",
     "train_total_length": 3600000,
-    "validation_total_length": 400000
+    "validation_total_length": 400000,
+
+    "_comment1": "currently using the same dataset for validation and train, need to fix later",
+    "test_dir": "datasets/amazon/test.ft.txt",
+    "test_total_length":400000
   },
   "meld": {
       "train_dir": "datasets/MELD/train_sent_emo.csv",

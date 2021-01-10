@@ -10,7 +10,8 @@ import os
 
 config = load_configuration(
     json.load(open("config/train_config.json")),
-    json.load(open("config/datasets_config.json"))
+    json.load(open("config/datasets_config.json")),
+    train=True
 )
 model, optimizer, scheduler, tokenizer = load_model(
     config, train=True
@@ -34,7 +35,7 @@ def save():
 
 for e in range(config["epochs"]):
     # doesn't work for some reason --> creates an empty progress bar that no one likes
-    if config["verbose"] > 0:
+    if config["verbose"] > 1:
         print("\nepoch %i/%i" % (e + 1, config["epochs"]))
 
     model.train()
@@ -74,7 +75,7 @@ for e in range(config["epochs"]):
         train_progress_bar.refresh()
 
         if history["total_batches"] % config["batches_per_save"] == 0:
-            if config["verbose"] > 0:
+            if config["verbose"] > 1:
                 print("saving...")
             save()
 

@@ -46,5 +46,6 @@ for plot_config in config["plots"]:
 
         with plt.style.context("seaborn-deep"):
             plt.plot(field, label=field_name)
+
     plt.legend(loc="best")
     plt.show()
