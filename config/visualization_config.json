@@ -1,0 +1,25 @@
+{
+    "target_folder": "model_files/test_model/4680",
+    "plots": [
+        {
+            "fields": ["train_loss", "validation_loss"],
+            "_comment1": "smoothing defaults to `steps_per_epoch`",
+            "_comment2": "custom smoothing not recommended for more than one field",
+            "smooth": null,
+            "_comment3": "the range defaults to full range",
+            "range": null
+        },
+        {
+            "fields": ["train_acc", "validation_acc"]
+        },
+        {
+            "fields": ["validation_loss"],
+            "_comment4": "choose between 'min' and 'max'",
+            "calculate": "min"
+        },
+        {
+            "fields": ["validation_acc"],
+            "calculate": "max"
+        }
+    ]
+}
