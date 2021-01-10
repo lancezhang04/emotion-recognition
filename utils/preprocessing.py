@@ -103,7 +103,7 @@ def process_meld_lines(lines, num_labels, meld_config):
 
             if num_labels > 2:
                 # maps emotion to class label (7 classes total)
-                label = meld_config["emotions_mapping"][line[3]]
+                label = meld_config["text_to_idx"][line[3]]
             elif num_labels == 2:
                 # maps sentiment to label (0, 0.5, or 1)
                 # "." to address the problem of pandas adding a ".1"
@@ -126,8 +126,8 @@ def process_meld_lines(lines, num_labels, meld_config):
     return X, y
 
 
-def load_meld_lines_random(file_dir, batch_size, num_labels=7):
-    meld_config = json.load(open("datasets/MELD/meld_config.json", "r"))
+def load_meld_lines_random(file_dir, batch_size, num_labels=7, meld_config=None):
+    meld_config = meld_config if meld_config else json.load(open("datasets/MELD/meld_config.json"))
     split = file_dir.split("/")[-1].split("_")[0]  # train/dev/test
     max_length = meld_config[split + "_total_length"]
 
@@ -140,8 +140,8 @@ def load_meld_lines_random(file_dir, batch_size, num_labels=7):
     return X, y
 
 
-def load_meld_lines(file_dir, start_idx, end_idx, num_labels):
-    meld_config = json.load(open("datasets/MELD/meld_config.json", "r"))
+def load_meld_lines(file_dir, start_idx, end_idx, num_labels, meld_config=None):
+    meld_config = meld_config if meld_config else json.load(open("datasets/MELD/meld_config.json"))
     # skips the first line (header)
     lines = [linecache.getline(file_dir, i + 2) for i in range(start_idx, end_idx)]
     X, y = process_meld_lines(lines, num_labels, meld_config)

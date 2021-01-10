@@ -39,10 +39,24 @@ def load_configuration(config, datasets_config, train=True):
     combined_config["visuals"] = {}
     combined_config["visuals"].update(config["visuals"])
 
-    # add configuration specific to training; print out configuration if necessary
     if train:
         combined_config.update(config["train"])
+    else:
+        combined_config["batch_size"] = config["batch_size"]
+        combined_config["use_dataset"] = config["use_dataset"]
 
+    # calculate number of batches in each =part of the dataset
+    combined_config["batches_per_epoch"] = \
+        combined_config["dataset"]["train_total_length"] // combined_config["batch_size"]
+    # bad implementation (for benchmarking), fix later
+    combined_config["batches_per_train"] = combined_config["batches_per_epoch"]
+    combined_config["batches_per_validation"] = \
+        combined_config["dataset"]["validation_total_length"] // combined_config["batch_size"]
+    combined_config["batches_per_test"] = \
+        combined_config["dataset"]["test_total_length"] // combined_config["batch_size"]
+
+    # add configuration specific to training; print out configuration if necessary
+    if train:
         combined_config["total_steps"] = combined_config["epochs"] * combined_config["dataset"]["train_total_length"]
 
         combined_config["batches_per_save"] = config["saving"]["batches_per_save"] \
@@ -52,16 +66,6 @@ def load_configuration(config, datasets_config, train=True):
         if combined_config["verbose"] > 0:
             for key, value in combined_config.items():
                 print(key + ":", value)
-    else:
-        combined_config["batch_size"] = config["batch_size"]
-    combined_config["batches_per_epoch"] = \
-        combined_config["dataset"]["train_total_length"] // combined_config["batch_size"]
-    # bad implementation (for benchmarking), fix later
-    combined_config["batches_per_train"] = combined_config["batches_per_epoch"]
-    combined_config["batches_per_validation"] = \
-        combined_config["dataset"]["validation_total_length"] // combined_config["batch_size"]
-    combined_config["batches_per_test"] = \
-        combined_config["dataset"]["test_total_length"] // combined_config["batch_size"]
 
     return combined_config
 
@@ -124,7 +128,8 @@ def load_batch_bert(tokenizer, config, batch_idx, mode="train"):
             config["dataset"][mode + "_dir"],
             batch_idx * config["batch_size"],
             (batch_idx + 1) * config["batch_size"],
-            num_labels=config["model"]["num_labels"]
+            num_labels=config["model"]["num_labels"],
+            meld_config=config["dataset"]
         )
     else:
         raise ValueError("The dataset \"" + dataset_name + "\" is not available")

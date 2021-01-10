@@ -4,6 +4,8 @@
     "validation_dir": "datasets/amazon/test.ft.txt",
     "train_total_length": 3600000,
     "validation_total_length": 400000,
+    "text_to_idx": {"negative": 0, "positive": 1},
+    "idx_to_text": {"0": "negative", "1": "positive"},
 
     "_comment1": "currently using the same dataset for validation and train, need to fix later",
     "test_dir": "datasets/amazon/test.ft.txt",
@@ -15,6 +17,9 @@
       "test_dir": "datasets/MELD/test_sent_emo.csv",
       "train_total_length": 9989,
       "validation_total_length": 1109,
-      "test_total_length": 2610
+      "test_total_length": 2610,
+
+      "text_to_idx": {"neutral": 0, "joy": 1, "surprise": 2, "anger": 3, "sadness": 4, "disgust": 5, "fear": 6},
+      "idx_to_text": {"0": "neutral", "1": "joy", "2": "surprise", "3": "anger", "4": "sadness", "5": "disgust", "6": "fear"}
   }
 }

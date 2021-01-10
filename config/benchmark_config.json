@@ -1,4 +1,6 @@
 {
+  "_comment1": "if `use_dataset` == false, use user given sentences",
+  "use_dataset": false,
   "batch_size": 32,
   "model": {
     "type": "bert",

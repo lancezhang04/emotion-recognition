@@ -7,7 +7,7 @@
   "validation_total_length": 1109,
   "test_total_length": 2610,
 
-  "emotions_mapping": {
+  "text_to_idx": {
     "neutral": 0,
     "joy": 1,
     "surprise": 2,
