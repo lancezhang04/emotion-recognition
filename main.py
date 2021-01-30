@@ -46,7 +46,7 @@ for e in range(config["epochs"]):
     for b in train_progress_bar:
         model.zero_grad()
 
-        if config["model"]["type"] == "bert":
+        if "bert" in config["model"]["type"]:
             X_train, X_mask, y_train = load_batch_bert(tokenizer, config, b, mode="train")
             outputs = model(
                 X_train,
@@ -86,7 +86,7 @@ for e in range(config["epochs"]):
     history["validation_acc"].append([])
     validation_progress_bar = trange(config["batches_per_validation"], desc="", ncols=config["visuals"]["ncols"])
     for b in validation_progress_bar:
-        if config["model"]["type"] == "bert":
+        if "bert" in config["model"]["type"]:
             with torch.no_grad():
                 X_val, X_mask, y_val = load_batch_bert(tokenizer, config, b, mode="validation")
                 outputs = model(

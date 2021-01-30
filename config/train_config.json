@@ -6,12 +6,12 @@
     "verbose": 0
   },
   "model": {
-    "type": "bert",
+    "type": "mobilebert",
     "use_pretrained": false,
     "pretrained_folder": "model_files/bert_meld_100/1872"
   },
   "saving": {
-    "save_folder": "model_files/test_model",
+    "save_folder": "model_files/mobile_bert_test",
     "_comment1": "defaults to saving once per epoch if `null`",
     "batches_per_save": null
   },

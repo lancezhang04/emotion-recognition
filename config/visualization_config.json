@@ -1,5 +1,5 @@
 {
-    "target_folder": "model_files/test_model/4680",
+    "target_folder": "model_files/test_model/2496",
     "plots": [
         {
             "fields": ["train_loss", "validation_loss"],

@@ -2,6 +2,7 @@ from utils.preprocessing import load_amazon_lines_random, load_meld_lines_random
     preprocess_bert, load_amazon_lines, load_meld_lines
 from transformers import BertForSequenceClassification, AdamW, \
     get_linear_schedule_with_warmup, BertTokenizer
+from transformers import MobileBertForSequenceClassification, MobileBertTokenizer
 import torch
 from torch.nn import Parameter
 import os
@@ -71,25 +72,33 @@ def load_configuration(config, datasets_config, train=True):
 
 
 def load_model(config, train=True):
-    if config["model"]["type"] not in ["bert"]:
+    if config["model"]["type"] not in ["bert", "mobilebert"]:
         raise ValueError("The model\"" + config["model"] + "\" is not available")
 
-    if config["model"]["type"] == "bert":
-        # `use_pretrained` --> use model trained and saved locally on the machine
-        if not train or config["model"]["use_pretrained"]:
-            model = BertForSequenceClassification.from_pretrained(
-                config["model"]["pretrained_folder"]
-            )
+    if "bert" in config["model"]["type"]:
+        if config["model"]["type"] == "bert":
+            if not train or config["model"]["use_pretrained"]:
+                model = BertForSequenceClassification.from_pretrained(config["model"]["pretrained_folder"])
+            else:
+                model = BertForSequenceClassification.from_pretrained(
+                    "bert-base-uncased",
+                    num_labels=config["model"]["num_labels"],
+                    output_attentions=False,
+                    output_hidden_states=False
+                )
+            tokenizer = BertTokenizer.from_pretrained("bert-base-uncased")
         else:
-            # use pre-trained model from hugging face
-            model = BertForSequenceClassification.from_pretrained(
-                "bert-base-uncased",
-                num_labels=config["model"]["num_labels"],
-                output_attentions=False,
-                output_hidden_states=False
-            )
+            if not train or config["model"]["use_pretrained"]:
+                model = MobileBertForSequenceClassification.from_pretrained(config["model"]["pretrained_folder"])
+            else:
+                model = MobileBertForSequenceClassification.from_pretrained(
+                    "google/mobilebert-uncased",
+                    num_labels=config["model"]["num_labels"],
+                    output_attentions=False,
+                    output_hidden_states=False
+                )
+            tokenizer = MobileBertTokenizer.from_pretrained("google/mobilebert-uncased")
         model.cuda()
-        tokenizer = BertTokenizer.from_pretrained("bert-base-uncased")
 
         if train:
             optimizer = AdamW(
