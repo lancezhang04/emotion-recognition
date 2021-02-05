@@ -25,7 +25,7 @@ model.eval()
 validation_progress_bar = trange(config["batches_per_" + config["dataset"]["mode"]],
                                  desc="", ncols=config["visuals"]["ncols"]) if config["use_dataset"] else range(100)
 for b in validation_progress_bar:
-    if config["model"]["type"] == "bert":
+    if "bert" in config["model"]["type"]:
         with torch.no_grad():
             if config["use_dataset"]:
                 X_test, X_mask, y_test = load_batch_bert(tokenizer, config, b, mode=config["dataset"]["mode"])

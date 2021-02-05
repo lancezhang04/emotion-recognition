@@ -1,10 +1,10 @@
 {
   "_comment1": "if `use_dataset` == false, use user given sentences",
-  "use_dataset": false,
+  "use_dataset": true,
   "batch_size": 32,
   "model": {
-    "type": "bert",
-    "pretrained_folder": "model_files/test_model/1560"
+    "type": "mobilebert",
+    "pretrained_folder": "model_files/mobile_bert_test/3744"
   },
   "dataset": {
     "name": "meld",

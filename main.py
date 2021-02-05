@@ -26,11 +26,16 @@ else:
 
 
 def save():
+    # if not os.path.exists(config["save_folder"]):
+    #     os.mkdir(config["save_folder"])
+
     folder_dir = os.path.join(config["save_folder"], str(history["total_batches"]))
-    if config["model"]["type"] == "bert":
+    if "bert" in config["model"]["type"]:
         model.save_pretrained(folder_dir)
         torch.save(optimizer.state_dict(), os.path.join(folder_dir, "optimizer.pt"))
         json.dump(history, open(os.path.join(folder_dir, "train.log"), "w"))
+    else:
+        raise NotImplementedError
 
 
 for e in range(config["epochs"]):
